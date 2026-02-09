@@ -8,10 +8,28 @@ class OceanFrame(QFrame):
         super().__init__(parent)
         self.setObjectName("MainContainer")
         self.setup_ui()
+        self.update_bubble_style(False)
 
     def setup_ui(self):
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(15, 15, 15, 15)
+
+        # 修复问题1：添加退出按钮 (×)
+        self.quit_btn = QPushButton("×", self)
+        self.quit_btn.setFixedSize(30, 30)
+        self.quit_btn.move(260, 10)  # 放在右上角
+        self.quit_btn.setStyleSheet("""
+                    QPushButton {
+                        color: #e74c3c; 
+                        font-size: 20px; 
+                        font-weight: bold;
+                        background: transparent;
+                        border: none;
+                    }
+                    QPushButton:hover { color: #c0392b; }
+                """)
+        self.quit_btn.raise_()
+        self.layout.addWidget(self.quit_btn)
 
         # 鲸鱼图标
         self.whale_label = QLabel("🐳")

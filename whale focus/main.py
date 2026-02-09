@@ -4,7 +4,6 @@ from PyQt6.QtCore import QTimer, Qt
 from core_logic import TimerBackend
 from ui_components import OceanFrame
 
-
 class OceanTimerApp(QWidget):
     def __init__(self):
         super().__init__()
@@ -12,7 +11,6 @@ class OceanTimerApp(QWidget):
         self.is_running = False
         self.is_collapsed = False
         self.is_dragging = False
-
         self.init_window()
 
     def init_window(self):
@@ -24,6 +22,7 @@ class OceanTimerApp(QWidget):
         self.ui.setGeometry(0, 0, 300, 350)
         self.ui.start_btn.clicked.connect(self.toggle_timer)
         self.ui.reset_btn.clicked.connect(self.reset_timer)
+        self.ui.quit_btn.clicked.connect(self.close)
 
         self.logic_timer = QTimer(self)
         self.logic_timer.timeout.connect(self.on_tick)
@@ -35,14 +34,18 @@ class OceanTimerApp(QWidget):
             self.backend.save_data(25)
             self.expand_ui()
             self.ui.whale_label.setText("🥳")
+            self.logic_timer.stop()
+            self.is_running = False
 
     def toggle_timer(self):
         if not self.is_running:
             self.is_running = True
+            self.ui.start_btn.setText("暂停")
             self.collapse_ui()
             self.logic_timer.start(1000)
         else:
             self.is_running = False
+            self.ui.start_btn.setText("开始专注")
             self.expand_ui()
             self.logic_timer.stop()
 
@@ -50,6 +53,7 @@ class OceanTimerApp(QWidget):
         self.is_collapsed = True
         self.ui.btn_widget.hide()
         self.ui.timer_label.hide()
+        self.ui.quit_btn.hide()
         self.ui.whale_label.setText("📖")
         self.setFixedSize(160, 160)
         self.ui.setGeometry(0, 0, 160, 160)
@@ -61,9 +65,9 @@ class OceanTimerApp(QWidget):
         self.ui.setGeometry(0, 0, 300, 350)
         self.ui.btn_widget.show()
         self.ui.timer_label.show()
+        self.ui.quit_btn.show()
         self.ui.update_bubble_style(False)
 
-    # 复用你之前的拖拽和鼠标悬停逻辑...
     def enterEvent(self, event):
         if self.is_running and self.is_collapsed:
             self.ui.whale_label.hide()
@@ -96,8 +100,8 @@ class OceanTimerApp(QWidget):
         self.is_running = False
         self.backend.reset()
         self.ui.timer_label.setText("25:00")
+        self.ui.start_btn.setText("开始专注")
         self.expand_ui()
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
